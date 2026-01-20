@@ -4,17 +4,18 @@ Base URL: `http://localhost:5000/api`
 
 ## Authentication
 
-### 1. Register User (Step 1)
+### 1. Register User
 **Endpoint:** `POST /auth/register`
 
-**Description:** Register a new user. The role can be omitted (defaults to 'customer') or included if known.
+**Description:** Register a new user with their role.
 
 **Payload:**
 ```json
 {
   "fullName": "John Doe",
   "email": "john@example.com",
-  "password": "password123"
+  "password": "password123",
+  "role": "driver" // or "customer"
 }
 ```
 
@@ -27,41 +28,12 @@ Base URL: `http://localhost:5000/api`
     "id": "60d0fe4f5311236168a109ca",
     "name": "John Doe",
     "email": "john@example.com",
-    "role": "customer"
+    "role": "driver"
   }
 }
 ```
 
-### 2. Update User Details / Select Role (Step 2)
-**Endpoint:** `PUT /auth/updatedetails`
-
-**Description:** Update user details, such as setting the role after registration.
-
-**Headers:**
-`Authorization: Bearer <token>`
-
-**Payload:**
-```json
-{
-  "role": "driver" // or "customer"
-}
-```
-
-**Success Response (200 OK):**
-```json
-{
-  "success": true,
-  "data": {
-    "_id": "60d0fe4f5311236168a109ca",
-    "fullName": "John Doe",
-    "email": "john@example.com",
-    "role": "driver",
-    "__v": 0
-  }
-}
-```
-
-### 3. Login User
+### 2. Login User
 **Endpoint:** `POST /auth/login`
 
 **Description:** Login with email and password to get an access token.
@@ -88,7 +60,7 @@ Base URL: `http://localhost:5000/api`
 }
 ```
 
-### 4. Get Current User (Me)
+### 3. Get Current User (Me)
 **Endpoint:** `GET /auth/me`
 
 **Description:** Get current logged-in user details.
@@ -111,7 +83,7 @@ Base URL: `http://localhost:5000/api`
 }
 ```
 
-### 5. Forgot Password
+### 4. Forgot Password
 **Endpoint:** `POST /auth/forgotpassword`
 
 **Description:** Request a password reset code via email.
@@ -131,7 +103,7 @@ Base URL: `http://localhost:5000/api`
 }
 ```
 
-### 6. Verify Code
+### 5. Verify Code
 **Endpoint:** `POST /auth/verifycode`
 
 **Description:** Verify the reset code sent to email.
@@ -152,7 +124,7 @@ Base URL: `http://localhost:5000/api`
 }
 ```
 
-### 7. Reset Password
+### 6. Reset Password
 **Endpoint:** `PUT /auth/resetpassword`
 
 **Description:** Reset password using the verification code.
