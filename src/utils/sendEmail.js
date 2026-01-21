@@ -18,7 +18,11 @@ const sendEmail = async (options) => {
   try {
     // Remove https:// if present in BASE_URL to avoid double protocol or handle cleanly
     // But .env has it. Let's assume .env is correct.
-    const baseUrl = process.env.INFOBIP_BASE_URL.replace(/\/$/, ''); // Remove trailing slash if any
+    let baseUrl = process.env.INFOBIP_BASE_URL.replace(/\/$/, ''); // Remove trailing slash if any
+    
+    if (!baseUrl.startsWith('http')) {
+        baseUrl = `https://${baseUrl}`;
+    }
 
     const response = await axios.post(
       `${baseUrl}/email/3/send`,

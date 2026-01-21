@@ -2,7 +2,11 @@ const axios = require('axios');
 
 const sendSms = async (to, text) => {
   try {
-    const baseUrl = process.env.INFOBIP_BASE_URL.replace(/\/$/, '');
+    let baseUrl = process.env.INFOBIP_BASE_URL.replace(/\/$/, '');
+    
+    if (!baseUrl.startsWith('http')) {
+        baseUrl = `https://${baseUrl}`;
+    }
 
     const response = await axios.post(
       `${baseUrl}/sms/2/text/advanced`,
