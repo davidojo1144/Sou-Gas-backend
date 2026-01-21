@@ -149,9 +149,14 @@ exports.verifyCode = async (req, res, next) => {
       return next(new ErrorResponse('Invalid code or code has expired', 400));
     }
 
+    // Generate a reset token that is valid for a short time (e.g., 10 mins)
+    // We can reuse the same token mechanism or create a specific one
+    const resetToken = user.getSignedJwtToken(); // Or a specific temporary token
+
     res.status(200).json({
       success: true,
       data: 'Code verified',
+      resetToken, // Send this back to client
     });
   } catch (err) {
     next(err);
@@ -160,19 +165,16 @@ exports.verifyCode = async (req, res, next) => {
 
 // @desc      Reset password
 // @route     PUT /api/auth/resetpassword
-// @access    Public
+// @access    Private (via resetToken)
 exports.resetPassword = async (req, res, next) => {
   try {
-    const { email, code, password } = req.body;
+    const { password } = req.body;
 
-    const user = await User.findOne({
-      email,
-      verificationCode: code,
-      verificationCodeExpire: { $gt: Date.now() },
-    });
+    // User is already attached to req.user by the 'protect' middleware using the resetToken
+    const user = await User.findById(req.user.id);
 
     if (!user) {
-      return next(new ErrorResponse('Invalid code or code has expired', 400));
+        return next(new ErrorResponse('User not found', 404));
     }
 
     // Set new password

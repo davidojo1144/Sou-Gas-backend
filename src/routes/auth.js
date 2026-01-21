@@ -222,6 +222,18 @@ router.post('/forgotpassword', forgotPassword);
  *     responses:
  *       200:
  *         description: Code verified
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: string
+ *                 resetToken:
+ *                   type: string
+ *                   description: Token to authorize password reset
  *       400:
  *         description: Invalid code
  */
@@ -233,6 +245,8 @@ router.post('/verifycode', verifyCode);
  *   put:
  *     summary: Reset password
  *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -240,15 +254,8 @@ router.post('/verifycode', verifyCode);
  *           schema:
  *             type: object
  *             required:
- *               - email
- *               - code
  *               - password
  *             properties:
- *               email:
- *                 type: string
- *                 format: email
- *               code:
- *                 type: string
  *               password:
  *                 type: string
  *                 minLength: 6
@@ -267,8 +274,8 @@ router.post('/verifycode', verifyCode);
  *                 user:
  *                   $ref: '#/components/schemas/User'
  *       400:
- *         description: Invalid code
+ *         description: Invalid request
  */
-router.put('/resetpassword', resetPassword);
+router.put('/resetpassword', protect, resetPassword);
 
 module.exports = router;
