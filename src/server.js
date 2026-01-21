@@ -42,6 +42,15 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerOptions));
 // Mount routers
 app.use('/api/auth', auth);
 
+// Root route
+app.get('/', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Welcome to Sou Gas Backend API',
+    docs: '/api-docs',
+  });
+});
+
 // Error handler middleware
 app.use(errorHandler);
 
