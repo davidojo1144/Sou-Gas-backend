@@ -2,13 +2,14 @@ const crypto = require('crypto');
 const User = require('../models/User');
 const ErrorResponse = require('../utils/errorResponse');
 const sendEmail = require('../utils/sendEmail');
+const sendSms = require('../utils/sendSms');
 
 // @desc      Register user
 // @route     POST /api/auth/register
 // @access    Public
 exports.register = async (req, res, next) => {
   try {
-    const { fullName, email, password, role } = req.body;
+    const { fullName, email, password, role, phoneNumber } = req.body;
 
     // Create user
     const user = await User.create({
@@ -16,6 +17,7 @@ exports.register = async (req, res, next) => {
       email,
       password,
       role,
+      phoneNumber,
     });
 
     sendTokenResponse(user, 200, res);
@@ -95,6 +97,16 @@ exports.forgotPassword = async (req, res, next) => {
     // Create message
     const message = `Your password reset code is: ${verificationCode}`;
 
+    // Send SMS if phone number exists
+    if (user.phoneNumber) {
+      try {
+        await sendSms(user.phoneNumber, message);
+      } catch (err) {
+        console.log('SMS sending failed:', err.message);
+        // Continue to send email as fallback or primary
+      }
+    }
+
     try {
       await sendEmail({
         email: user.email,
@@ -104,7 +116,7 @@ exports.forgotPassword = async (req, res, next) => {
 
       res.status(200).json({
         success: true,
-        data: 'Email sent',
+        data: 'Code sent',
       });
     } catch (err) {
       console.log(err);

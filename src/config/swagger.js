@@ -37,6 +37,7 @@ const options = {
             id: { type: 'string', description: 'User ID' },
             fullName: { type: 'string', description: 'Full name of the user' },
             email: { type: 'string', format: 'email', description: 'User email' },
+            phoneNumber: { type: 'string', description: 'User phone number' },
             role: { type: 'string', enum: ['customer', 'driver'], description: 'User role' },
             createdAt: { type: 'string', format: 'date-time', description: 'Creation timestamp' },
           },

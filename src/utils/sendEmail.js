@@ -1,20 +1,38 @@
-const { Resend } = require('resend');
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+const axios = require('axios');
+const FormData = require('form-data');
 
 const sendEmail = async (options) => {
-  try {
-    const data = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL,
-      to: options.email,
-      subject: options.subject,
-      html: `<strong>${options.message}</strong>`, // Resend requires html or text
-      text: options.message, // Providing text version as fallback/alternative
-    });
+  const form = new FormData();
+  form.append('from', process.env.INFOBIP_EMAIL_FROM || 'noreply@sougas.com');
+  form.append('to', options.email);
+  form.append('subject', options.subject);
+  form.append('text', options.message);
+  
+  if (options.html) {
+    form.append('html', options.html);
+  } else {
+    // Basic fallback if no HTML provided, though typically we should provide it
+    form.append('html', `<div>${options.message}</div>`);
+  }
 
-    console.log('Email sent successfully:', data);
+  try {
+    // Remove https:// if present in BASE_URL to avoid double protocol or handle cleanly
+    // But .env has it. Let's assume .env is correct.
+    const baseUrl = process.env.INFOBIP_BASE_URL.replace(/\/$/, ''); // Remove trailing slash if any
+
+    const response = await axios.post(
+      `${baseUrl}/email/3/send`,
+      form,
+      {
+        headers: {
+          'Authorization': `App ${process.env.INFOBIP_API_KEY}`,
+          ...form.getHeaders(),
+        },
+      }
+    );
+    console.log('Email sent successfully:', response.data);
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.error('Error sending email:', error.response ? error.response.data : error.message);
     throw new Error('Email could not be sent');
   }
 };

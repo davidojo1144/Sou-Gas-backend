@@ -42,6 +42,8 @@ const { protect } = require('../middleware/auth');
  *               email:
  *                 type: string
  *                 format: email
+ *               phoneNumber:
+ *                 type: string
  *               password:
  *                 type: string
  *                 minLength: 6
