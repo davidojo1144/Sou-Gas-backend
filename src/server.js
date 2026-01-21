@@ -36,6 +36,9 @@ app.use(cors());
 // Set security headers
 app.use(helmet());
 
+// Swagger Docs
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerOptions));
+
 // Mount routers
 app.use('/api/auth', auth);
 
