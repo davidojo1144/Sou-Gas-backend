@@ -3,6 +3,9 @@ const dotenv = require('dotenv');
 const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerOptions = require('./config/swagger');
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/error');
 
